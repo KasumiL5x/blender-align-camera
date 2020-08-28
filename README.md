@@ -16,8 +16,8 @@ In the panel, you can press the `Align Camera` button to, well, do what it says 
 Curious but don't want to try it? Gotcha covered fam.
 
 ### Oh, Suzanne!
-![](TODO)
+![](https://github.com/KasumiL5x/blender-align-camera/raw/master/demo/demo-monkey.gif)
 
 ### Cube
-![](TODO)
+![](https://github.com/KasumiL5x/blender-align-camera/raw/master/demo/demo-cube.gif)
 
