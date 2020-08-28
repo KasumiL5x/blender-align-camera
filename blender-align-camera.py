@@ -14,11 +14,10 @@ class DEV_OT_align_camera(bpy.types.Operator):
 	bl_idname = 'dev.align_camera'
 	bl_label = 'Align Camera'
 
-	# @classmethod
-	# def poll(self, context):
-	# 	# RegionView3D is accessible & 1+ faces are selected.
-	# 	return len(self.__get_selected_faces())
-	# #end
+	@classmethod
+	def poll(self, context):
+		return (bpy.context.object is not None) and ('MESH' == bpy.context.object.type)
+	#end
 
 	def execute(self, context):
 		selected_faces = self.__get_selected_faces()
@@ -26,25 +25,10 @@ class DEV_OT_align_camera(bpy.types.Operator):
 	#end
 
 	def __get_selected_faces(self):
-		# Active object (if multiple are selected, first; if none selected, last active).
-		obj = bpy.context.object
-
-		# Safety check for no mesh.
-		# if None == obj or obj.type != 'MESH':
-		# 	return []
-
-		# Store old mode and switch to edit mode (faces only valid in edit mode).
-		# old_mode = obj.mode
-		# bpy.ops.object.mode_set(mode='EDIT')
-
 		# Extract selected faces (must toggle for the list to update, not sure if it's a bug?).
 		bpy.ops.object.editmode_toggle()
 		selected_faces = list(filter(lambda x: x.select, bpy.context.object.data.polygons))
 		bpy.ops.object.editmode_toggle()
-
-		# Restore old edit mode.
-		# bpy.ops.object.mode_set(mode=old_mode)
-
 		return selected_faces
 	#end
 #end
