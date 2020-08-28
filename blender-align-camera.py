@@ -40,11 +40,11 @@ class DEV_OT_align_camera(bpy.types.Operator):
 		# New camera position from average position along average normal by the camera's initial distance.
 		new_cam_position = (average_position + average_normal * initial_distance)
 
-		print(average_normal)
-		print(average_position)
-		print(camera_position)
-		print(initial_distance)
-		print(new_cam_position)
+		# Calculate and set new camera lookat matrix.
+		lookat_mat = self.__lookat(new_cam_position, average_position)
+		r3d.view_matrix = lookat_mat
+		# Update 'view_location' (target) of the viewport to match else there's a disconnect in rotation.
+		r3d.view_location = average_position
 
 		return {'FINISHED'}
 	#end
@@ -95,6 +95,28 @@ class DEV_OT_align_camera(bpy.types.Operator):
 		inv = mat.inverted()
 		return mathutils.Vector((inv[0][3], inv[1][3], inv[2][3]))
 	#end
+
+	def __lookat(self, pos, target):
+		camdir = (pos - target).normalized()
+		worldUp = mathutils.Vector((0, 0, 1)) # TODO: Possibly expose this vector?
+		right = worldUp.cross(camdir)
+		up = camdir.cross(right)
+
+		m1 = mathutils.Matrix()
+		m2 = mathutils.Matrix()
+
+		# other
+		m1[0] = mathutils.Vector((right.x, right.y, right.z, 0))
+		m1[1] = mathutils.Vector((up.x, up.y, up.z, 0))
+		m1[2] = mathutils.Vector((camdir.x, camdir.y, camdir.z, 0))
+
+		# pos
+		m2[0][3] = -pos.x
+		m2[1][3] = -pos.y
+		m2[2][3] = -pos.z
+
+		lookat = m1 @ m2
+		return lookat
 #end
 
 class DEV_PT_align_camera(bpy.types.Panel):
